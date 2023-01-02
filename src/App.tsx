@@ -42,8 +42,8 @@ function App() {
 
     {words: ['cat'], pictures: ['cat.png', 'cat-2.png', 'cat-3.png', 'cat-4.png']},
     {words: ['dog'], pictures: ['dog.png', 'dog-2.png', 'dog-3.png', 'dog-4.png', 'dog-5.png', 'dog-6.png', 'dog-7.png', 'dog-8.png']},
-    {words: ['ball'], pictures: ['ball.png']},
-
+    {words: ['ball'], pictures: ['ball.png', 'ball-2.png', 'ball-3.png', 'ball-4.png']},
+    {words: ['tree'], pictures: ['tree.png']},
     {words: ['toys'], pictures: ['toys.png', 'toys-2.png', 'toys-3.png', 'toys-4.png']},
     {words: ['book'], pictures: ['book.png', 'book-2.png', 'book-3.png', 'book-4.png', 'book-5.png']},
     {words: ['apple'], pictures: ['apple-1672572113.png']},
