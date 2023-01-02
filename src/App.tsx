@@ -11,30 +11,72 @@ import Card, {CardState} from "./Card";
 
 */
 
+function choice<T>(arr: Array<T>): T {
+  // if (!arr.length || arr.length === 0) return;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function shuffle<T>(arr: Array<T>): Array<T> {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+function chunks<T>(arr: Array<T>, size: number): Array<Array<T>> {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
+function intersection<T>(a: Array<T>, b: Array<T>): Array<T> {
+  return a.filter((x) => b.includes(x));
+}
 
 function App() {
   const wordsPairs = [
-    {word: 'cat', picture: '/img/cat.png'},
-    {word: 'dog', picture: '/img/dog.png'},
-    {word: 'ball', picture: '/img/ball.png'},
-    {word: 'eraser', picture: '/img/eraser.png'},
-    {word: 'toys', picture: '/img/toys.png'},
-    {word: 'rocket', picture: '/img/rocket.png'},
-    {word: 'pencil', picture: '/img/pencil.png'},
-    {word: 'book', picture: '/img/book.png'},
+    {words: ['car'], pictures: ['car-1.png', 'car-2.png', 'car-3.png', 'car-4.png']},
+    {words: ['ruler'], pictures: ['ruler-1.png', 'ruler-2.png']},
+    {words: ['pencil'], pictures: ['pencil.png', 'pencil-2.png', 'pencil-3.png', 'pencil-4.png', 'pencil-5.png', 'pencil-6.png', 'pencil-7.png']},
+    {words: ['eraser', 'rubber'], pictures: ['eraser.png', 'eraser-2.png', 'eraser-3.png']},
+    {words: ['rocket'], pictures: ['rocket.png', 'rocket-2.png', 'rocket-3.png', 'rocket-4.png']},
+
+    {words: ['cat'], pictures: ['cat.png', 'cat-2.png', 'cat-3.png', 'cat-4.png']},
+    {words: ['dog'], pictures: ['dog.png', 'dog-2.png', 'dog-3.png', 'dog-4.png', 'dog-5.png', 'dog-6.png', 'dog-7.png', 'dog-8.png']},
+    {words: ['ball'], pictures: ['ball.png']},
+
+    {words: ['toys'], pictures: ['toys.png', 'toys-2.png', 'toys-3.png', 'toys-4.png']},
+    {words: ['book'], pictures: ['book.png', 'book-2.png', 'book-3.png', 'book-4.png', 'book-5.png']},
+    {words: ['apple'], pictures: ['apple-1672572113.png']},
+    {words: ['banana'], pictures: ['banana-1672572189.png', 'banana-1672572223.png']},
+    {words: ['bread'], pictures: ['bread-1672571934.png']},
+    {words: ['chair'], pictures: ['chair.png', 'chair-2.png']},
+    {words: ['chicken'], pictures: ['chicken-1672572083.png', 'chicken-1672572060.png']},
+    {words: ['elephant'], pictures: ['elephant.png', 'elephant-2.png']},
+    {words: ['fish'], pictures: ['fish-1672641718.png']},
+    {words: ['meat'], pictures: ['meat.png', 'meat-1672572304.png']},
+    {words: ['milk'], pictures: ['milk-1.png', 'milk-2.png', 'milk-3.png']},
+    {words: ['pizza'], pictures: ['pizza.png', 'pizza-2.png']},
+    {words: ['potato'], pictures: ['potato.png', 'potato-2.png', 'potato-1672572315.png']},
+    // 1..15
+    {words: ['flower'], pictures: ['flower.png', 'flower-2.png', 'flower-3.png', 'flower-4.png', 'flower-5.png',
+        'flower-6.png', 'flower-7.png', 'flower-8.png', 'flower-9.png', 'flower-10.png', 'flower-11.png', 'flower-12.png',
+        'flower-13.png', 'flower-14.png', 'flower-15.png']},
+
   ]
-  const cardDefs = wordsPairs.map((pair, i) => [
-    {id: `word-${i}`, word: pair.word, picture: undefined},
-    {id: `pic-${i}`, word: pair.word, picture: pair.picture},
+  const gridSideSize = 4;
+  const gridSize = gridSideSize * gridSideSize;
+  const selectedWordsPairs = shuffle(wordsPairs).slice(0, Math.floor(gridSize / 2));  // 8 words
+  const cardDefs = selectedWordsPairs.map((pair, i) => [
+    {id: `word-${i}`, word: choice(pair.words), picture: undefined, src: pair},
+    {id: `pic-${i}`, picture: choice(pair.pictures), src: pair},
   ]);
-  const cardsArray: Array<CardState> = cardDefs[0].concat(...cardDefs.slice(1)).map((card, i) => (
+  const cardsArray: Array<CardState> = shuffle(cardDefs[0].concat(...cardDefs.slice(1)).map((card, i) => (
     {
       ...card,
-      order: i,
     }
-  ));
+  )));
   // shuffled
-  const [cards, setCards] = useState(cardsArray.sort(() => Math.random() - 0.5));
+  const [cards, setCards] = useState(cardsArray);
   const [selected, setSelected] = useState<CardState | undefined>(undefined);
   const grid = []
   const rowSize = 4
@@ -48,7 +90,7 @@ function App() {
     utterance.voice = voice || null;
     utterance.pitch = 1.0 + Math.random() * 0.2;
     utterance.rate = 0.7 + Math.random() * 0.3;
-
+    utterance.lang = 'en-US'
 
     speechSynthesis.speak(utterance);
   };
@@ -66,11 +108,11 @@ function App() {
 
                   onClick={() => {
                     if (selected && selected.id !== card.id) {
-                      if (selected.word === card.word) {
+                      if (intersection(selected.src.words, card.src.words).length > 0) {
                         // match
                         // play sound effect
                         // fade out cards from the board
-                        speak("Awesome!");
+                        speak(choice(["Awesome!", "Great!", "Good job!", "Nice!", "Perfect!", "Super!", "Well done!"]));
                         setSelected(undefined)
                         setCards(cards.map((c) => {
                           if (c.id === selected.id || c.id === card.id) {
@@ -79,13 +121,13 @@ function App() {
                           return c
                         }))
                       } else {
-                        if(!card.picture) {
+                        if(card.word) {
                           speak(card.word)
                         }
                         // no match
                         // add .shake class for 1 second
                         // remove .shake class
-                        speak("No!")
+                        speak(choice(["No!", 'Nope!', 'Try again!', 'Wrong!']));
                         setSelected(undefined)
                         setCards(cards.map((c) => {
                           if (c.id === selected.id || c.id === card.id) {
@@ -109,7 +151,7 @@ function App() {
                       } else {
                         card.selected =  card.selected? false : true
                         setSelected(card)
-                        if (card.selected && card.picture === undefined) {
+                        if (card.selected && card.word) {
                           speak(card.word)
                         }
                       }

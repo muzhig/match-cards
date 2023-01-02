@@ -3,11 +3,15 @@ import React from "react";
 
 export type CardState = {
   id: string,
-  word: string,
+  word?: string,
   picture?: string,
   selected?: boolean,
   hidden?: boolean,
   shake?: boolean,
+  src: {
+    words: string[],
+    pictures: string[],
+  }
   // sound?: string,
   // position: {x: number, y: number},
   // order: number,
@@ -18,7 +22,7 @@ export default function Card({card, ...props}: any) {
   return (
       <div {...props} >
         {card.picture?
-              <img src={card.picture} alt={card.id} onDragStart={(e)=> e.preventDefault()}/>
+              <img src={`/img/${card.picture}`} alt={card.id} onDragStart={(e)=> e.preventDefault()}/>
               :
               <span>{card.word}</span>
             }
