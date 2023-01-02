@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import Card, {CardState} from "./Card";
+import {Container, Grid} from "@mui/material";
 
 /*
 // A game where player can learn english words by matching cards
@@ -99,7 +100,7 @@ function App() {
 
   ]
   const gridWidth = 6;
-  const gridHeight = 5;
+  const gridHeight = 4;
   const gridSize = gridWidth * gridHeight;
   const selectedWordsPairs = shuffle(wordsPairs).slice(0, Math.floor(gridSize / 2));  // 8 words
   const cardDefs = selectedWordsPairs.map((pair, i) => [
@@ -114,78 +115,87 @@ function App() {
   // shuffled
   const [cards, setCards] = useState(cardsArray);
   const [selected, setSelected] = useState<CardState | undefined>(undefined);
-  const grid = chunks(cards, gridWidth);
+
 
   return (
     <div className="App">
-      {
-        grid.map((row, i) => (
-          <div className="row" key={i}>
-            {
-              row.map((card) => (
-                <Card
-                  card={card}
-                  key={card.id}
-                  className={`${card.selected ? 'selected' : ''} ${card.hidden ? 'hidden' : ''} ${card.shake ? 'shake' : ''} ${card.src.props?.className || ''}`}
-                  style={card.src.props?.css||{}}
-                  onClick={() => {
-                    if (selected && selected.id !== card.id) {
-                      if (intersection(selected.src.words, card.src.words).length > 0) {
-                        // match
-                        // play sound effect
-                        // fade out cards from the board
-                        speak(choice(["Awesome!", "Great!", "Good job!", "Nice!", "Perfect!", "Super!", "Well done!"]));
-                        setSelected(undefined)
-                        setCards(cards.map((c) => {
-                          if (c.id === selected.id || c.id === card.id) {
-                            return {...c, selected: false, hidden: true}
-                          }
-                          return c
-                        }))
-                      } else {
-                        if(card.word) {
-                          speak(card.word)
+      <Container sx={{mt: {
+        xs: 1,
+          sm: 2,
+          md: 4,
+          lg: 6
+        }}}
+                 fixed={true}
+                 maxWidth="md"
+      >
+        <Grid container spacing={1} justifyContent={'center'}>
+
+        {
+          cards.map((card, i) => (
+            <Grid item xs={3} md={2} key={i}>
+              <Card
+                card={card}
+                key={card.id}
+                className={`${card.selected ? 'selected' : ''} ${card.hidden ? 'hidden' : ''} ${card.shake ? 'shake' : ''} ${card.src.props?.className || ''}`}
+                style={card.src.props?.css||{}}
+                onClick={() => {
+                  if (selected && selected.id !== card.id) {
+                    if (intersection(selected.src.words, card.src.words).length > 0) {
+                      // match
+                      // play sound effect
+                      // fade out cards from the board
+                      speak(choice(["Awesome!", "Great!", "Good job!", "Nice!", "Perfect!", "Super!", "Well done!"]));
+                      setSelected(undefined)
+                      setCards(cards.map((c) => {
+                        if (c.id === selected.id || c.id === card.id) {
+                          return {...c, selected: false, hidden: true}
                         }
-                        // no match
-                        // add .shake class for 1 second
-                        // remove .shake class
-                        speak(choice(["No!", 'Nope!', 'Try again!', 'Wrong!']));
-                        setSelected(undefined)
-                        setCards(cards.map((c) => {
-                          if (c.id === selected.id || c.id === card.id) {
-                            return {...c, selected: false, shake: true}
-                          }
-                          return c
-                        }))
-                        setTimeout(() => {
-                          setCards(cards.map((c) => {
-                            if (c.id === selected.id || c.id === card.id) {
-                              return {...c, selected: false, shake: false}
-                            }
-                            return c
-                          }))
-                        }, 1000)
-                      }
+                        return c
+                      }))
                     } else {
-                      if (card.selected) {
-                        card.selected =  false
-                        setSelected(undefined)
-                      } else {
-                        card.selected =  card.selected? false : true
-                        setSelected(card)
-                        if (card.selected && card.word) {
-                          speak(card.word)
-                        }
+                      if(card.word) {
+                        speak(card.word)
                       }
-                      setCards([...cards])
+                      // no match
+                      // add .shake class for 1 second
+                      // remove .shake class
+                      speak(choice(["No!", 'Nope!', 'Try again!', 'Wrong!']));
+                      setSelected(undefined)
+                      setCards(cards.map((c) => {
+                        if (c.id === selected.id || c.id === card.id) {
+                          return {...c, selected: false, shake: true}
+                        }
+                        return c
+                      }))
+                      setTimeout(() => {
+                        setCards(cards.map((c) => {
+                          if (c.id === selected.id || c.id === card.id) {
+                            return {...c, selected: false, shake: false}
+                          }
+                          return c
+                        }))
+                      }, 1000)
                     }
-                  }}
-                />
-              ))
-            }
-          </div>
-        ))
-      }
+                  } else {
+                    if (card.selected) {
+                      card.selected =  false
+                      setSelected(undefined)
+                    } else {
+                      card.selected =  card.selected? false : true
+                      setSelected(card)
+                      if (card.selected && card.word) {
+                        speak(card.word)
+                      }
+                    }
+                    setCards([...cards])
+                  }
+                }}
+              />
+            </Grid>
+          ))
+        }
+        </Grid>
+      </Container>
     </div>
   );
 }
