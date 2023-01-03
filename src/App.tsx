@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import Card, {CardState} from "./Card";
-import {Container} from "@mui/material";
+import {Box, Container} from "@mui/material";
 
 function choice<T>(arr: Array<T>): T {
   // if (!arr.length || arr.length === 0) return;
@@ -131,16 +131,17 @@ function App() {
 
   return (
     <div className="App">
-      <Container sx={{
-        mt: {
-          xs: 1,
-            sm: 3,
-            md: 6,
-            lg: 10
-          }
+      <Box sx={{
+          mt: {
+            xs: 1,
+              sm: 3,
+              md: 6,
+              lg: 10
+          },
+          padding: 0,
+          maxWidth: 440,
+          display: 'inline-block',
         }}
-        fixed={true}
-        maxWidth="md"
       >
         {chunks(cards, gridWidth).map((row) => (
           <>
@@ -209,11 +210,11 @@ function App() {
               // </Box>
             ))
             }
-            <br/>
+            {/*<br/>*/}
           </>
         ))
         }
-      </Container>
+      </Box>
     </div>
   );
 }
