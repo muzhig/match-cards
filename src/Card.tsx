@@ -1,4 +1,5 @@
 import React from "react";
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 
 function BrushStroke(props: any) {
   return (
@@ -111,8 +112,12 @@ export default function Card({card, ...props}: any) {
           <img src={`/img/${card.picture}`} alt={card.id} onDragStart={(e)=> e.preventDefault()}/>
         : card.glyph?
           <span className="glyph">{card.glyph}</span>
-        : card.word?
-          <span>{card.word}</span>
+        : card.word? (
+          [
+            <VolumeUpIcon sx={{mb: 1}}/>,
+            <span>{card.word}</span>
+          ]
+        )
         : null}
       </div>
   );

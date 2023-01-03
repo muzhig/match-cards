@@ -15,13 +15,14 @@ code {
 
 
 .card {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100px;
   height: 100px;
   background-color: white;
   border: 1px solid #777;
-  text-align: center;
-  line-height: 100px;
+  align-items: center;
   vertical-align: middle;
   text-transform: uppercase;
   font-size: 1.5em;
