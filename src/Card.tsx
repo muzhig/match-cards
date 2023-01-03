@@ -102,7 +102,7 @@ export type CardState = {
 }
 
 export default function Card({card, ...props}: any) {
-  props.className = `card ${card.picture ? 'picture' : 'word'} ${props.className || ''}`
+  props.className = `card ${card.color? 'color': card.picture ? 'picture' : card.glyph? 'glyph': 'word'} ${props.className || ''}`
   return (
       <div {...props} >
         {card.color?

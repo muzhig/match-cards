@@ -33,6 +33,11 @@ code {
   overflow: hidden;
   margin: 0.1em;
   transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+.card.word {
+  font-size: 1.2em;
 }
 
 .card img {
