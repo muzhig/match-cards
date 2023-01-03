@@ -114,8 +114,8 @@ export default function Card({card, ...props}: any) {
           <span className="glyph">{card.glyph}</span>
         : card.word? (
           [
-            <VolumeUpIcon sx={{mb: 1}}/>,
-            <span>{card.word}</span>
+            <VolumeUpIcon sx={{mb: 1}} key={'icon'}/>,
+            <span key={'word'}>{card.word}</span>
           ]
         )
         : null}
