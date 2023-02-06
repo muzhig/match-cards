@@ -86,7 +86,8 @@ def download_audio(dir, word=None, category=None):
 
 @cli.command()
 @click.option('--dir', default='public/pictures')
-def sort_pictures(dir):
+@click.option('--dry-run', is_flag=True, default=False)
+def sort_pictures(dir, dry_run):
     word_counters = defaultdict(int)
     all_categories = list_existing_categories()
     all_words = defaultdict(list)
@@ -157,10 +158,27 @@ def sort_pictures(dir):
         'ars_cup_of_tea__an_illustration_for_a_book_white_background_col_1e762bde-6ddc-4338-9328-29747fceb5e4.png': ('tea', 'food', 'mj'),
         'ars_blueberry_berries_on_a_plate_an_illustration_for_a_book_whi_1bffe1e1-6072-479c-aad5-c4a9aae39213.png': ('blueberry', 'food', 'mj'),
         'ars_two_cherries_on_a_plate_an_illustration_for_a_book_white_ba_ed93d41f-b3cd-423a-9ffa-71a6a6d80454.png': ('cherry', 'food', 'mj'),
+
+        'ars_brush_with_black_paint_an_illustration_for_a_book_white_bac_63d37d5c-f8c9-44dc-865a-aa52765dac59.png': ('black', 'colors', 'mj'),
+        'ars_brush_with_blue_paint_an_illustration_for_a_book_white_back_2e762666-4735-477f-85fe-bec5fd64c45e.png': ('blue', 'colors', 'mj'),
+        'ars_brush_with_brown_paint_an_illustration_for_a_book_white_bac_4b312c16-a973-4ab1-97b8-01b059092af1.png': ('brown', 'colors', 'mj'),
+        'ars_brush_with_gray_paint_an_illustration_for_a_book_white_back_f18aeea9-9d00-4ae1-b545-d1d0856f489d.png': ('gray', 'colors', 'mj'),
+        'ars_brush_with_green_paint_an_illustration_for_a_book_white_bac_e88583cd-67be-4a00-90cc-e9addaad0c1a.png': ('green', 'colors', 'mj'),
+        'ars_brush_with_orange_paint_an_illustration_for_a_book_white_ba_e5bd38bb-d22c-462a-915b-038f6d287d17.png': ('orange', 'colors', 'mj'),
+        'ars_brush_with_pink_paint_an_illustration_for_a_book_white_back_ee7f3063-3523-4b29-ace4-ac0760cb0894.png': ('pink', 'colors', 'mj'),
+        'ars_brush_with_purple_paint_an_illustration_for_a_book_white_ba_5d729d08-d59d-40a0-9b60-4e36ea1ebb44.png': ('purple', 'colors', 'mj'),
+        'ars_brush_with_red_paint_an_illustration_for_a_book_white_backg_907ce82e-fde2-495e-b34c-92b59baa2f9a.png': ('red', 'colors', 'mj'),
+        'ars_brush_with_white_paint_an_illustration_for_a_book_white_bac_13f7e614-f14b-4f66-a053-871b0a0e6a33.png': ('white', 'colors', 'mj'),
+        'ars_brush_with_white_paint_an_illustration_for_a_book_white_bac_4096abbd-2807-4479-a5f0-0d81141fe723.png': ('white', 'colors', 'mj'),
+        'ars_brush_with_white_paint_an_illustration_for_a_book_white_bac_e264ad44-e664-45bd-9267-80ea28ce440e.png': ('white', 'colors', 'mj'),
+        'ars_brush_with_white_paint_an_illustration_for_a_book_white_bac_fe885a77-5a9d-46b2-b892-039bcc6839e8.png': ('white', 'colors', 'mj'),
+        'ars_brush_with_yellow_paint_an_illustration_for_a_book_white_ba_d14133d0-ce60-49a3-988c-bfb0693e7576.png': ('yellow', 'colors', 'mj'),
+        'ars_red_bucket_of_paint_an_illustration_for_a_book_white_backgr_31cf9928-3b8c-45af-aafc-7b9e66a3606c.png': ('red', 'colors', 'mj'),
+        'ars_red_marker_an_illustration_for_a_book_white_background_colo_4d88b281-f04e-47ec-b8f7-ab6f7cd1588e.png': ('red', 'colors', 'mj'),
     }
-    with open('rename.log', 'w') as flog:
+    with open('rename.log', 'a') as flog:
         for f in os.listdir(dir):
-            if os.path.isdir(f):
+            if os.path.isdir(os.path.join(dir, f)):
                 continue
             if f in exemptions:
                 word, label, src_suffix = exemptions[f]
@@ -175,11 +193,16 @@ def sort_pictures(dir):
             word_counters[word] += 1
             word_dir = os.path.join(dir, word)
             src = os.path.join(dir, f)
-            dst = os.path.join(word_dir, f'{word}__{label}__mj{word_counters[word]}.png')
-            flog.write(f'"{src}" "{dst}"\n')
-            os.makedirs(word_dir, exist_ok=True)
-            shutil.move(src, dst)
-            print(f'✅ {f} {word} {label} {uuid} {word_counters[word]}')
+            dst_fname = f'{word}__{label}__mj{word_counters[word]}.png'
+            dst = os.path.join(word_dir, dst_fname)
+            if os.path.exists(dst):
+                print(f'❌ {f} {word}/{dst_fname} (already exists)')
+                continue
+            if not dry_run:
+                flog.write(f'"{src}" "{dst}"\n')
+                os.makedirs(word_dir, exist_ok=True)
+                shutil.move(src, dst)
+            print(f'✅ {f} {word} {label} {dst_fname}')
 
 @cli.command()
 @click.option('--dir', default='public/pictures')
@@ -211,7 +234,8 @@ def cut_squares(dir):
 
 @cli.command()
 @click.option('--dir', default='public/pictures')
-def fill_pictures(dir):
+@click.option('--category', default=None)
+def fill_pictures(dir, category=None):
     """Fill pictures column in spreadsheet"""
 
     all_words = defaultdict(list)
@@ -222,7 +246,8 @@ def fill_pictures(dir):
         word = fdir.rsplit('/', 1)[-1]
         all_words[word].append(fname)
     all_categories = list_existing_categories()
-    for category, ws in all_categories.items():
+    categories = all_categories.items() if category is None else [(category, all_categories[category])]
+    for category, ws in categories:
         for i, rec in enumerate(ws.get_all_records()):
             word = rec['word']
             if word not in all_words:
