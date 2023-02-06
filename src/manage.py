@@ -175,6 +175,31 @@ def sort_pictures(dir, dry_run):
         'ars_brush_with_yellow_paint_an_illustration_for_a_book_white_ba_d14133d0-ce60-49a3-988c-bfb0693e7576.png': ('yellow', 'colors', 'mj'),
         'ars_red_bucket_of_paint_an_illustration_for_a_book_white_backgr_31cf9928-3b8c-45af-aafc-7b9e66a3606c.png': ('red', 'colors', 'mj'),
         'ars_red_marker_an_illustration_for_a_book_white_background_colo_4d88b281-f04e-47ec-b8f7-ab6f7cd1588e.png': ('red', 'colors', 'mj'),
+
+        'ars_thunderstorm_weather_nature_an_illustration_for_a_book_whit_4c46ddec-4262-41fb-96bf-bbf0ade3479c.png': ('storm', 'weather', 'mj'),
+        'ars_birds_habitat_an_illustration_for_a_book_white_background_c_524a5301-013d-41d0-b22a-7f22a0d2663c.png': ('bird', 'animals', 'mj'),
+        'ars_lake_without_island_an_illustration_for_a_book_white_backgr_91335892-1fed-4eac-ae16-1857f4998800.png': ('lake', 'nature', 'mj'),
+        'ars_grass_hills_habitat_an_illustration_for_a_book_white_backgr_2bdf9c7c-a6b6-4235-924e-0f45e9891103.png': ('hill', 'nature', 'mj'),
+        'ars_sand_desert_an_illustration_for_a_book_white_background_col_5445041b-3992-4608-a995-58ddc3056331.png': ('desert', 'nature', 'mj'),
+        'ars_tv_in_a_living_room_an_illustration_for_a_book_white_backgr_f2e8e346-ad22-45a4-bec6-b0d2280ced39.png': ('tv', 'house', 'mj'),
+        'ars_tv_in_a_living_room_an_illustration_for_a_book_white_backgr_43295b1a-8411-437a-b2ce-cf76abee4f35.png': ('tv', 'house', 'mj'),
+        'ars_giraffes_in_the_savannah_an_illustration_for_a_book_white_b_114206e9-7af0-4348-9d9c-b3f5fd484179.png': ('giraffe', 'animals', 'mj'),
+        'ars_north_forest_an_illustration_for_a_book_white_background_co_cac47bd5-fe49-4aee-b28c-956b44514fc7.png': ('forest', 'nature', 'mj'),
+        'ars_island_in_ocean_landscape_an_illustration_for_a_book_white__b202a76a-64bb-4502-b2a7-287a98f94b04.png': ('island', 'nature', 'mj'),
+        'ars_lightbulb_an_illustration_for_a_book_white_background_color_82ab0698-29ba-43ec-891f-202cc9f42bfd.png': ('lamp', 'house', 'mj'),
+        'ars_tv_in_a_living_room_an_illustration_for_a_book_white_backgr_19b29c15-3f07-4230-b170-2b6631d9d121.png': ('tv', 'house', 'mj'),
+        'ars_tropical_beach_nature_an_illustration_for_a_book_white_back_d7d9cd0b-6484-48a8-9f63-530dfa32084b.png': ('beach', 'nature', 'mj'),
+        'ars_animals_of_antarctica_an_illustration_for_a_book_white_back_a3421cda-0b41-4f94-aa83-d7300428877d.png': ('penguin', 'animals', 'mj'),
+        'ars_meadow_landscape_nature_an_illustration_for_a_book_white_ba_5cdab318-9c51-401c-89ce-b7ce8f9dca92.png': ('meadow', 'nature', 'mj'),
+        'ars_sand_beach_an_illustration_for_a_book_white_background_colo_47daa6ad-0331-412a-9110-93e12f32317a.png': ('beach', 'nature', 'mj'),
+        'ars_animals_in_habitat_an_illustration_for_a_book_white_backgro_d74d2b45-8af9-436d-8940-bab6292a2380.png': ('bird', 'animals', 'mj'),
+        'ars_deers_on_a_grassfield_an_illustration_for_a_book_white_back_41a85196-4367-4757-9609-725dcfe2fecb.png': ('deer', 'animals', 'mj'),
+        'ars_bears_on_a_river_an_illustration_for_a_book_white_backgroun_e9cf2b3d-da8e-4b9a-9069-be194e5b62f3.png': ('bear', 'animals', 'mj'),
+        'ars_island_in_ocean_an_illustration_for_a_book_white_background_e8d8b3ea-0d19-4298-ba66-266500327afd.png': ('island', 'nature', 'mj'),
+        'ars_mirror_hanging_on_a_wall_in_the_bathroom_an_illustration_fo_3327258b-10b0-4608-a2ac-124507103b06.png': ('mirror', 'house', 'mj'),
+        'ars_tornado_weather_realistic_an_illustration_for_a_book_white__2d2f186b-cd4e-4ba4-b3ee-0ec8209c977f.png': ('tornado', 'nature', 'mj'),
+        'ars_mirror_wall_fittings_an_illustration_for_a_book_white_backg_11c6968f-8e35-430b-86c6-744009628021.png': ('mirror', 'house', 'mj'),
+        'ars_lamp_house_furniture_an_illustration_for_a_book_white_backg_c98de15c-671e-4174-841c-114c4d740eca.png': ('lamp', 'house', 'mj'),
     }
     with open('rename.log', 'a') as flog:
         for f in os.listdir(dir):
@@ -207,7 +232,7 @@ def sort_pictures(dir, dry_run):
 @cli.command()
 @click.option('--dir', default='public/pictures')
 def cut_squares(dir):
-    """Split all pictures into quarters"""
+    """Clip pictures into 4 squares"""
     from PIL import Image
 
     for f in glob.glob(f'{dir}/**/*_mj?.png', recursive=True):
