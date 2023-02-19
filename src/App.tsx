@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './App.css';
 import Card, {CardState} from "./Card";
-import {Box, Container} from "@mui/material";
+import {Box, Container, Stack} from "@mui/material";
 import wordPairsJSON from "./wordPairs.json";
 
 function choice<T>(arr: Array<T>): T {
@@ -54,7 +54,7 @@ function weightedRandomSample<T>(arr: Array<T>, weights: Array<number>, sampleSi
 const generateCards = (gridWidth: number, gridHeight: number): Array<CardState> => {
     const wordsPairs = wordPairsJSON as Array<{
       weight: number,
-      words: string[],
+      word: string,
       pictures: string[],
       audio?: string[],
       color?: string,
@@ -64,11 +64,11 @@ const generateCards = (gridWidth: number, gridHeight: number): Array<CardState> 
     // todo: smarter way to select words, exclude banned word / category / picture combinations
     const selectedWordsPairs = weightedRandomSample(wordsPairs, wordsPairs.map(wp => wp.weight), Math.floor(gridSize / 2));  // 8 words
     const cardDefs = selectedWordsPairs.map((pair, i) => {
-      const word = choice(pair.words);
+      const word = pair.word;
       const picture = choice(pair.pictures);
       return [
         {id: `word-${i}`, word: word, picture: undefined, src: pair},
-        {id: `pic-${i}`, picture: picture, color: pair.color, glyph: pair.glyph, src: pair, word: word},
+        {id: `pic-${i}`, picture: picture, color: pair.color, glyph: pair.glyph, src: pair, word: word, audio: pair.audio},
       ]
     });
     const cardsArray: Array<CardState> = shuffle(cardDefs[0].concat(...cardDefs.slice(1)).map((card, i) => (
@@ -148,7 +148,7 @@ function App() {
       selectCard(card);
     } else if (card.id === selected.id) {
       deselectCard(card);
-    } else if (intersection(selected.src.words, card.src.words).length > 0) {
+    } else if (selected.src.word === card.src.word) {
       onCardsMatched(card, selected);
     } else {
       onCardsMismatched(card, selected);
@@ -166,27 +166,67 @@ function App() {
       <Box sx={{
           mt: {
             xs: 1,
-              sm: 3,
-              md: 6,
-              lg: 10
+            sm: 3,
+            md: 6,
+            lg: 10
           },
           padding: 0,
-          maxWidth: 440,
+          maxWidth: {
+            xs: '100%',
+            sm: '440px',
+            md: '660px',
+            lg: '880px',
+          },
           display: 'inline-block',
         }}
       >
-        {cards.map((card) => (
-            // <Box sx={{spacing: {xs: 0, sm: 1}}} key={i}>
-            <Card
-              card={card}
-              key={card.id}
-              className={`${card.selected ? 'selected' : ''} ${card.hidden ? 'hidden' : ''} ${card.shake ? 'shake' : ''} ${card.src.props?.className || ''}`}
-              style={card.src.props?.css||{}}
-              onClick={() => onClickCard(card)}
-            />
-            // </Box>
+        <Stack
+          spacing={{
+            xs: 0,
+            sm: 1,
+            lg: 2
+          }}>
+        {
+          chunks(cards, 4).map((row, i) => (
+            <Stack key={`row-${i}`} direction='row' spacing={{
+              xs: 0,
+              sm: 1,
+              lg: 2
+            }}>
+              {
+                row.map((card) => (
+                  <Box
+                    sx={{
+                      width: {
+                        xs: '100px',
+                        sm: '100px',
+                        md: '150px',
+                        lg: '200px',
+                      },
+                      height: {
+                        xs: '100px',
+                        sm: '100px',
+                        md: '150px',
+                        lg: '200px',
+                      },
+                      display: 'inline-block',
+                    }}
+                    key={card.id}
+                  >
+                    <Card
+                      card={card}
+                      key={card.id}
+                      className={`${card.selected ? 'selected' : ''} ${card.hidden ? 'hidden' : ''} ${card.shake ? 'shake' : ''} ${card.src.props?.className || ''}`}
+                      style={card.src.props?.css||{}}
+                      onClick={() => onClickCard(card)}
+                    />
+                  </Box>
+                ))
+              }
+            </Stack>
           ))
         }
+        </Stack>
       </Box>
     </div>
   );

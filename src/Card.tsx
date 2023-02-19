@@ -93,8 +93,9 @@ export type CardState = {
   hidden?: boolean,
   shake?: boolean,
   src: {
-    words: string[],
+    word: string,
     pictures: string[],
+    audio?: string[],
     props?: any
   }
   // sound?: string,
@@ -109,7 +110,7 @@ export default function Card({card, ...props}: any) {
         {card.color?
           <BrushStroke style={{color: card.color}} />
         : card.picture?
-          <img src={`/pictures/${card.word}/${card.picture}`} alt={card.id} onDragStart={(e)=> e.preventDefault()}/>
+          <img src={`/pictures/${card.picture}`} alt={card.id} onDragStart={(e)=> e.preventDefault()}/>
         : card.glyph?
           <span className="glyph">{card.glyph}</span>
         : card.word? (

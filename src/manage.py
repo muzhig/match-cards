@@ -286,26 +286,57 @@ def fill_pictures(dir, category=None):
 @cli.command()
 @click.option('--only-with-pictures/--all', default=True)
 def words_json(only_with_pictures=True):
-    res= []
+    words = []
+    by_id = {}
     for category, ws in list_existing_categories().items():
         if category in ['TEMPLATE', 'META']:
             continue
         records = ws.get_all_records()
         for i, rec in enumerate(records):
-            if only_with_pictures and not rec['pictures']:
+            if only_with_pictures and not rec['pictures'] and not rec['label']:
                 continue
             word = {
+                "id": f"{category}.{rec['word']}",
                 "category": category,
-                "words": [rec['word']],
+                "word": rec['word'],
                 "pictures": rec['pictures'].split(';') if rec['pictures'] else [],
                 "audio": rec['audio'].split(';') if rec['audio'] else [],
                 "suppress_pairs_with": rec['suppress_pairs_with'].split(';') if rec['suppress_pairs_with'] else [],
-                "weight": float(rec['weight']) if rec['weight'] else 1.0,
+                "weight": float(rec['weight']) if rec['weight'] is not None  and rec['weight'] != '' else 1.0,
                 **({"glyph": rec['label']} if rec['label'] else {}),
             }
-            res.append(json.dumps(word))
+            words.append(word)
+            by_id[word['id']] = word
+
+    def resolve_picture_links(word: str, category: str):
+        word_rec = by_id[f'{category}.{word}']
+        if word_rec.get('resolved_pictures'):
+            return word_rec['pictures']
+        pictures = []
+        for pic in word_rec['pictures']:
+            source_word = word
+            source_category = category
+            if '/' in pic:
+                source_word_category, pic = pic.split('/', 1)
+                if '.' in source_word_category:
+                    source_category, source_word = source_word_category.split('.', 1)
+                else:
+                    source_word = source_word_category
+            if pic == '*':
+                pictures.extend(
+                    resolve_picture_links(source_word, source_category)
+                )
+            else:
+                pictures.append(f'{source_word}/{pic}')
+        word_rec['pictures'] = pictures
+        word_rec['resolved_pictures'] = True
+        return pictures
     print("[\n  ", end="")
-    print(",\n  ".join(res))
+    for word in words:
+        _ = resolve_picture_links(word['word'], word['category'])
+    print(",\n  ".join([
+        json.dumps(word) for word in words
+    ]))
     print("]")
 
 if __name__ == '__main__':
