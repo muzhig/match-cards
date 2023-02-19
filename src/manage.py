@@ -1,4 +1,5 @@
 import glob
+import json
 import pathlib
 import re
 import shutil
@@ -282,6 +283,30 @@ def fill_pictures(dir, category=None):
             print(f'✅ updated {category}/{word} (row {i + 1})')
 
 
+@cli.command()
+@click.option('--only-with-pictures/--all', default=True)
+def words_json(only_with_pictures=True):
+    res= []
+    for category, ws in list_existing_categories().items():
+        if category in ['TEMPLATE', 'META']:
+            continue
+        records = ws.get_all_records()
+        for i, rec in enumerate(records):
+            if only_with_pictures and not rec['pictures']:
+                continue
+            word = {
+                "category": category,
+                "words": [rec['word']],
+                "pictures": rec['pictures'].split(';') if rec['pictures'] else [],
+                "audio": rec['audio'].split(';') if rec['audio'] else [],
+                "suppress_pairs_with": rec['suppress_pairs_with'].split(';') if rec['suppress_pairs_with'] else [],
+                "weight": float(rec['weight']) if rec['weight'] else 1.0,
+                **({"glyph": rec['label']} if rec['label'] else {}),
+            }
+            res.append(json.dumps(word))
+    print("[\n  ", end="")
+    print(",\n  ".join(res))
+    print("]")
 
 if __name__ == '__main__':
     cli()
