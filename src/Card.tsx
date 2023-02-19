@@ -86,7 +86,7 @@ export type CardState = {
   id: string,
   word?: string,
   picture?: string,
-
+  audio?: string[],
   glyph?: string,
 
   selected?: boolean,

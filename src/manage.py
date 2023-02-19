@@ -300,7 +300,11 @@ def words_json(only_with_pictures=True):
                 "category": category,
                 "word": rec['word'],
                 "pictures": rec['pictures'].split(';') if rec['pictures'] else [],
-                "audio": rec['audio'].split(';') if rec['audio'] else [],
+                "audio": [
+                    f'{rec["word"]}/{audio}'
+                    for audio in (rec['audio'].split(';') if rec['audio'] else [])
+                    if audio.lower().endswith('.mp3')
+                ],
                 "suppress_pairs_with": rec['suppress_pairs_with'].split(';') if rec['suppress_pairs_with'] else [],
                 "weight": float(rec['weight']) if rec['weight'] is not None  and rec['weight'] != '' else 1.0,
                 **({"glyph": rec['label']} if rec['label'] else {}),

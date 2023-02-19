@@ -25,6 +25,13 @@ function intersection<T>(a: Array<T>, b: Array<T>): Array<T> {
   return a.filter((x) => b.includes(x));
 }
 
+const playAudio = (fname: string) => {
+  const url = '/audio/' + fname
+  console.log('playAudio', url)
+  const audio = new Audio(url);
+  return audio.play();
+}
+
 const speak = (word: string) => {
   const voices = speechSynthesis.getVoices();
   const voice = voices.find((v) => v.name === 'Google US English');
@@ -67,8 +74,8 @@ const generateCards = (gridWidth: number, gridHeight: number): Array<CardState> 
       const word = pair.word;
       const picture = choice(pair.pictures);
       return [
-        {id: `word-${i}`, word: word, picture: undefined, src: pair},
-        {id: `pic-${i}`, picture: picture, color: pair.color, glyph: pair.glyph, src: pair, word: word, audio: pair.audio},
+        {id: `word-${i}`, word: word, picture: undefined, src: pair, audio: pair.audio},
+        {id: `pic-${i}`, picture: picture, color: pair.color, glyph: pair.glyph, src: pair},
       ]
     });
     const cardsArray: Array<CardState> = shuffle(cardDefs[0].concat(...cardDefs.slice(1)).map((card, i) => (
@@ -131,8 +138,17 @@ function App() {
   }
   const selectCard = (card: CardState) => {
     setSelected(card);
-    card.selected = true;
-    if (card.word) {
+    card.selected = true
+    if (card.audio){
+      playAudio(
+        choice(card.audio)
+      ).catch((e) => {
+        console.log('playAudio error', e)
+        if (card.word) {
+          speak(card.word)
+        }
+      })
+    } else if (card.word) {
       speak(card.word)
     }
     setCards([...cards]);
