@@ -149,9 +149,9 @@ function App() {
     } else if (card.id === selected.id) {
       deselectCard(card);
     } else if (intersection(selected.src.words, card.src.words).length > 0) {
-      onCardsMatched(selected, card);
+      onCardsMatched(card, selected);
     } else {
-      onCardsMismatched(selected, card);
+      onCardsMismatched(card, selected);
     }
   }
 
