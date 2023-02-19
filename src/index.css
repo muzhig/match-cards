@@ -15,11 +15,11 @@ code {
 
 
 .card {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100px;
-  height: 100px;
+  align-content: center;
+  height: 100%;
   background-color: white;
   box-sizing: border-box;
   border: 1px solid #777;
@@ -33,7 +33,6 @@ code {
 
   border-radius: 20%;
   overflow: hidden;
-  margin: 0.1rem;
   transition: all 0.2s ease-in-out;
   user-select: none;
 }
