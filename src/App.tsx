@@ -26,10 +26,14 @@ function intersection<T>(a: Array<T>, b: Array<T>): Array<T> {
 }
 
 const playAudio = (fname: string) => {
-  const url = '/audio/' + fname
-  console.log('playAudio', url)
-  const audio = new Audio(url);
-  return audio.play();
+  if (!audioStore.has(fname)) {
+    console.log(
+      `Miss cache for ${fname}, loading from /audio/${fname}`, audioStore
+    )
+    audioStore.set(fname, new Audio('/audio/' + fname))
+  }
+  const audio = audioStore.get(fname)
+  return audio!.play()
 }
 
 const speak = (word: string) => {
@@ -83,17 +87,33 @@ const generateCards = (gridWidth: number, gridHeight: number): Array<CardState> 
         ...card,
       }
     )));
+    cardsArray.forEach((card, i) => {
+      if (card.audio) {
+        card.audio.forEach((audio) => {
+          if (!audioStore.has(audio)) {
+            console.log(`Miss cache for ${audio}, loading from /audio/${audio}`, audioStore)
+            const audioEl = new Audio(`/audio/${audio}`)
+            audioEl.preload = 'auto'
+            audioStore.set(audio, audioEl)
+          }
+        })
+      }
+    })
     return cardsArray;
   }
+
+const audioStore = new Map<string, HTMLAudioElement>()
 
 function App() {
 
   const gridWidth = 4;
   const gridHeight = 4;
 
-  const [cards, setCards] = useState(generateCards(gridWidth, gridHeight));
+  const [cards, setCards] = useState([] as Array<CardState>);
   const [selected, setSelected] = useState<CardState | undefined>(undefined);
-
+  if (cards.length === 0) {
+    setCards(generateCards(gridWidth, gridHeight))
+  }
   const onCardsMatched = (card1: CardState, card2: CardState) => {
     // match
     // play sound effect
