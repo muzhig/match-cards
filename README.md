@@ -1,1 +1,1 @@
-https://match-cards.pages.dev
+https://match-cards.potapov.dev
